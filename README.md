@@ -73,6 +73,18 @@ The HICP series measures price-index dynamics and should not be interpreted as a
 
 ### Eurostat income
 
+Dataset:
+
+`ilc_di03`
+
+Indicator:
+
+`MED_EI — Median equivalised income`
+
+Unit:
+
+`PPS`
+
 Median equivalised net income in Purchasing Power Standards (PPS).
 
 Geographies:
@@ -98,6 +110,10 @@ For the affordability analysis, the EU-SILC survey year is aligned with its inco
 
 ### Bulgarian National Statistical Institute
 
+Source file:
+
+`HH_2.2.3_BGN.xlsx`
+
 Household expenditure data for Bulgaria are taken from the NSI household budget statistics.
 
 The project tracks the share of monetary household expenditure allocated to:
@@ -114,11 +130,15 @@ This indicator is interpreted as a descriptive measure of household expenditure 
 
 ### European Commission Weekly Oil Bulletin
 
+Source file:
+
+`Weekly_Oil_Bulletin_Prices_History_maticni_4web.xlsx`
+
+Worksheet:
+
+`Prices with taxes`
+
 Historical diesel prices are taken from the European Commission Weekly Oil Bulletin.
-
-The project uses:
-
-**Prices with taxes**
 
 Original unit:
 
@@ -313,6 +333,34 @@ A declining food expenditure share may be consistent with a lower relative food 
 
 ---
 
+## Interpretation and scientific context
+
+Taken together, the project shows that food affordability cannot be assessed from food-price inflation alone.
+
+For Bulgaria, the food-adjusted income-growth proxy is positive for both available reference years: 2.81% in 2023 and 10.42% in 2024. This indicates that income growth in PPS exceeded food-price growth according to this specific proxy. It does not imply that food prices fell, that households became proportionally wealthier, or that overall household welfare improved.
+
+This interpretation is consistent with Pawlak et al. (2024), who analyse economic access to food in the EU using food prices, household income and broader food-security indicators. Their results show that income growth may offset food-price inflation while other indicators of household food insecurity can still deteriorate. Therefore, price and income comparisons alone do not provide a complete measure of household welfare or food security.
+
+The diesel analysis provides exploratory evidence of delayed co-movement between energy costs and food inflation. Among the tested lags of 0–3 months, the strongest positive correlations occur at a three-month lag for Bulgaria, Germany and Romania. Average food HICP inflation is also higher in months preceded three months earlier by positive diesel-price YoY growth.
+
+These findings are broadly consistent with Borrallo et al. (2026), who find significant and persistent transmission of food and energy commodity-price shocks to food inflation in the euro area, including asymmetric responses to price increases and decreases. However, their estimated transmission dynamics differ from this project and reach their maximum effect at around twelve months. The literature therefore supports the possibility of delayed and asymmetric transmission, but does not validate the specific three-month lag or correlation coefficients estimated here.
+
+Finally, the Bulgarian household-expenditure series shows a long-run decline in the share of monetary expenditure allocated to food and non-alcoholic beverages, from 34.9% in 2008 to 29.1% in 2025, although the path is not monotonic.
+
+Olipra (2024) shows that the relationship between income and the household food-expenditure share in Central and Eastern European economies can be non-linear. Food-expenditure shares may stabilise or even increase despite rising incomes. This supports interpreting the Bulgarian expenditure-share series as a descriptive indicator of household expenditure structure rather than direct evidence of changes in welfare.
+
+Overall, the project provides descriptive evidence that the relationship between food prices and household economic conditions is shaped jointly by income growth, expenditure structure and cost-side pressures such as energy prices. The findings are broadly consistent with prior European research, but the project's lag estimates, correlations and affordability proxy should not be interpreted as causal estimates or externally validated parameters.
+
+---
+
+## Scientific literature
+
+Borrallo, F., Cuadro-Sáez, L., Gras-Miralles, Á. and Perez, J.J. (2026) ‘The transmission of shocks to food and energy commodity prices to food inflation in the euro area’, *Applied Economics Letters*, 33(3), pp. 411–416. [https://doi.org/10.1080/13504851.2024.2369711](https://doi.org/10.1080/13504851.2024.2369711).
+
+Olipra, J. (2024) ‘Does Engel’s law work in central and Eastern European countries? The role of aspirations in determining food expenditures’, *Structural Change and Economic Dynamics*, 71, pp. 26–34. [https://doi.org/10.1016/j.strueco.2024.06.005](https://doi.org/10.1016/j.strueco.2024.06.005).
+
+Pawlak, K., Malak-Rawlikowska, A., Hamulczuk, M. and Skrzypczyk, M. (2024) ‘Has food security in the EU countries worsened during the COVID-19 pandemic? Analysis of physical and economic access to food’, *PLOS ONE*, 19(4), e0302072. [https://doi.org/10.1371/journal.pone.0302072](https://doi.org/10.1371/journal.pone.0302072).
+
 ## Visual outputs
 
 Generated figures are stored in:
@@ -341,7 +389,6 @@ european_food_price_monitor/
 ├── data/
 │   └── raw/
 │       ├── ec_oil/
-│       ├── eurostat/
 │       └── nsi/
 │
 ├── notebooks/
@@ -365,7 +412,7 @@ european_food_price_monitor/
 │   ├── nsi_pipeline.py
 │   └── fuel_pipeline.py
 │
-├── .env
+├── .env   # local only, excluded from Git
 ├── .gitignore
 ├── requirements.txt
 └── README.md
