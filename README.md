@@ -155,3 +155,274 @@ Eurostat APIs / NSI Excel / European Commission Excel
                     Matplotlib
                          ↓
               interpretation / outputs
+
+              ```
+
+The project uses separate reusable Python pipeline modules for:
+
+- food HICP;
+- income;
+- NSI household expenditure;
+- diesel prices.
+
+Database loads use UPSERT logic so pipelines can be re-run without creating duplicate records.
+
+---
+
+## Database tables
+
+### `hicp_food_index`
+
+Monthly food HICP observations.
+
+### `income_pps`
+
+Annual median equivalised income in PPS.
+
+Primary key:
+
+```text
+(year, geo)
+```
+
+### `household_food_expenditure_share`
+
+Bulgarian household food expenditure share.
+
+Primary key:
+
+```text
+(year, geo)
+```
+
+### `diesel_prices`
+
+Monthly average diesel prices.
+
+Primary key:
+
+```text
+(month, geo)
+```
+
+---
+
+## Food affordability methodology
+
+Two complementary indicators are retained.
+
+### Simple difference
+
+```text
+income growth (%) - food HICP growth (%)
+```
+
+This produces a difference in percentage points and is useful as a simple descriptive approximation.
+
+### Food-adjusted income growth
+
+The main ratio-based affordability proxy is:
+
+```text
+((1 + income growth) / (1 + food-price growth) - 1) × 100
+```
+
+This avoids treating two growth rates as directly additive.
+
+The metric is named:
+
+`food_adjusted_income_growth_pct`
+
+It is a descriptive affordability proxy and should not be interpreted as an official measure of real purchasing power or household welfare.
+
+---
+
+## Affordability results
+
+| Reference year | Geography | Income growth | Food HICP growth | Food-adjusted income growth |
+|---|---|---:|---:|---:|
+| 2023 | BG | 17.25% | 14.05% | 2.81% |
+| 2023 | DE | 4.59% | 12.70% | -7.20% |
+| 2023 | EU27_2020 | 6.74% | 12.65% | -5.24% |
+| 2023 | RO | 17.49% | 14.63% | 2.49% |
+| 2024 | BG | 13.49% | 2.78% | 10.42% |
+| 2024 | DE | 5.57% | 2.34% | 3.15% |
+| 2024 | EU27_2020 | 6.56% | 2.32% | 4.15% |
+| 2024 | RO | -1.24% | 2.89% | -4.02% |
+
+For Bulgaria, the proxy is positive in both available reference years and increases substantially in 2024.
+
+This does not mean that food prices fell. It means that income growth exceeded food-price growth according to this specific indicator.
+
+![Food-adjusted income growth](outputs/figures/food_adjusted_income_growth.png)
+
+---
+
+## Diesel and food inflation analysis
+
+Monthly diesel-price YoY changes were compared with food HICP YoY inflation.
+
+The analysis tested diesel-price changes at:
+
+- lag 0;
+- lag 1 month;
+- lag 2 months;
+- lag 3 months.
+
+For the period used in the comparison, each country contributes 44 monthly observations.
+
+Among the tested lags, the strongest positive linear association appears at a three-month lag:
+
+| Geography | Lag-3 correlation |
+|---|---:|
+| BG | 0.331 |
+| DE | 0.213 |
+| RO | 0.378 |
+
+A conditional comparison also shows higher average food HICP inflation when diesel YoY growth had been positive three months earlier:
+
+| Geography | Diesel up | Diesel down | Difference |
+|---|---:|---:|---:|
+| BG | 9.77% | 5.88% | +3.89 pp |
+| DE | 6.46% | 4.22% | +2.24 pp |
+| RO | 8.30% | 7.23% | +1.07 pp |
+
+These results indicate a descriptive lagged association only.
+
+They do **not** establish that diesel-price changes cause changes in food prices.
+
+![Diesel and food inflation lag comparison](outputs/figures/diesel_food_lag3_comparison.png)
+
+---
+
+## Bulgarian household expenditure
+
+NSI data cover:
+
+`2008–2025`
+
+The share of monetary expenditure allocated to food and non-alcoholic beverages declines over much of the long-run period, although the series is not monotonic.
+
+Examples:
+
+- 2008: 34.9%
+- 2024: 28.3%
+- 2025: 29.1%
+
+A declining food expenditure share may be consistent with a lower relative food burden, but it should not be interpreted independently as proof of higher household welfare.
+
+---
+
+## Visual outputs
+
+Generated figures are stored in:
+
+```text
+outputs/figures/
+```
+
+Current outputs include:
+
+```text
+diesel_food_lag3_comparison.png
+bg_diesel_food_timeseries.png
+de_diesel_food_timeseries.png
+ro_diesel_food_timeseries.png
+food_adjusted_income_growth.png
+```
+
+---
+
+## Project structure
+
+```text
+european_food_price_monitor/
+│
+├── data/
+│   └── raw/
+│       ├── ec_oil/
+│       ├── eurostat/
+│       └── nsi/
+│
+├── notebooks/
+│   ├── 01_food_prices.ipynb
+│   ├── 02_income.ipynb
+│   ├── 03_eurostat_discovery_demo.ipynb
+│   ├── 04_nsi_household_budget.ipynb
+│   └── 05_fuel_diesel.ipynb
+│
+├── outputs/
+│   └── figures/
+│
+├── sql/
+│   ├── schema.sql
+│   └── analysis.sql
+│
+├── src/
+│   ├── db.py
+│   ├── hicp_pipeline.py
+│   ├── income_pipeline.py
+│   ├── nsi_pipeline.py
+│   └── fuel_pipeline.py
+│
+├── .env
+├── .gitignore
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## Methodological limitations
+
+The project is primarily descriptive and exploratory.
+
+Important limitations include:
+
+- HICP is an index and not an absolute euro food-price series.
+- Income data and food-price data require careful temporal alignment.
+- PPS income is not equivalent to disposable cash income.
+- Household expenditure shares do not directly measure welfare.
+- Correlation does not imply causation.
+- Diesel prices are only one of many potential drivers of food inflation.
+- The diesel lag analysis does not constitute a causal pass-through model.
+- The EU aggregate from the Weekly Oil Bulletin is not assumed to be identical to Eurostat `EU27_2020`.
+
+Potential drivers not explicitly modelled include:
+
+- wages;
+- electricity and gas prices;
+- agricultural input costs;
+- exchange rates;
+- taxation;
+- supply-chain disruptions;
+- retailer margins;
+- market structure.
+
+---
+
+## Reproducibility
+
+Database credentials are stored in a local `.env` file and are excluded from version control.
+
+Python database connections are handled through:
+
+```text
+src/db.py
+```
+
+Reusable pipeline scripts allow source data to be cleaned and loaded into MariaDB consistently.
+
+SQL analytics are stored in:
+
+```text
+sql/analysis.sql
+```
+
+All five Jupyter notebooks were tested from a clean kernel using a full restart and Run All workflow.
+
+---
+
+## Status
+
+The analytical MVP is complete and published as a reproducible portfolio project.
