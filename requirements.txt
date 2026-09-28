@@ -1,0 +1,7 @@
+pandas
+requests
+matplotlib
+mariadb
+python-dotenv
+openpyxl
+jupyter
